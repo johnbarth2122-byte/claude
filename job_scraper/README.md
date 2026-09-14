@@ -24,11 +24,14 @@ Set env vars (or export in your shell / `.env` + a loader):
 export JOB_KEYWORDS="account manager,client success,customer success"
 export JOB_LOCATION="Remote"
 
-# Twilio (https://console.twilio.com) — trial account works
-export TWILIO_ACCOUNT_SID="ACxxxxxxxx"
-export TWILIO_AUTH_TOKEN="xxxxxxxx"
-export TWILIO_FROM_NUMBER="+1xxxxxxxxxx"   # your Twilio number
-export TWILIO_TO_NUMBER="+1xxxxxxxxxx"     # your phone
+# Free SMS via Gmail -> carrier email-to-SMS gateway (no Twilio account needed)
+# 1. Turn on 2FA on your Google account, then create an App Password:
+#    https://myaccount.google.com/apppasswords
+# 2. Find your carrier's gateway domain (AT&T: txt.att.net, Verizon: vtext.com,
+#    T-Mobile: tmomail.net, Sprint: messaging.sprintpcs.com)
+export GMAIL_USER="you@gmail.com"
+export GMAIL_APP_PASSWORD="xxxxxxxxxxxxxxxx"   # 16-char app password, not your login password
+export SMS_TO_ADDRESS="5551234567@vtext.com"   # your number@carrier gateway
 
 # Optional: specific companies to check via their ATS
 export GREENHOUSE_COMPANIES="airbnb,stripe"

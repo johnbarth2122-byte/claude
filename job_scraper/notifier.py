@@ -1,21 +1,32 @@
-from twilio.rest import Client
+import smtplib
+from email.mime.text import MIMEText
+
 import config
 
 
 def send_sms(body):
-    if not all([config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTH_TOKEN,
-                config.TWILIO_FROM_NUMBER, config.TWILIO_TO_NUMBER]):
-        print("[notifier] Twilio not configured — skipping SMS. Set TWILIO_* env vars.")
+    """Sends via Gmail SMTP to a carrier email-to-SMS gateway address —
+    the carrier delivers it to the phone as a real text message, no Twilio
+    account or per-message cost required."""
+    if not all([config.GMAIL_USER, config.GMAIL_APP_PASSWORD, config.SMS_TO_ADDRESS]):
+        print("[notifier] Email-to-SMS not configured — skipping. "
+              "Set GMAIL_USER, GMAIL_APP_PASSWORD, SMS_TO_ADDRESS.")
         print(f"[notifier] Would have sent:\n{body}")
         return
 
-    client = Client(config.TWILIO_ACCOUNT_SID, config.TWILIO_AUTH_TOKEN)
-    client.messages.create(body=body, from_=config.TWILIO_FROM_NUMBER, to=config.TWILIO_TO_NUMBER)
+    msg = MIMEText(body)
+    msg["From"] = config.GMAIL_USER
+    msg["To"] = config.SMS_TO_ADDRESS
+    msg["Subject"] = ""  # most carrier gateways prepend the subject to the text; keep it empty
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(config.GMAIL_USER, config.GMAIL_APP_PASSWORD)
+        server.sendmail(config.GMAIL_USER, [config.SMS_TO_ADDRESS], msg.as_string())
 
 
 def notify_new_jobs(jobs):
-    """SMS is limited/priced per segment, so batch into one message per run
-    and cap how many postings get spelled out to keep it short."""
+    """Carrier SMS gateways truncate/split long emails, so batch into one
+    message per run and cap how many postings get spelled out to keep it short."""
     if not jobs:
         return
 

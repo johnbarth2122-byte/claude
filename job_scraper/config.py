@@ -5,11 +5,17 @@ KEYWORDS = [k.strip() for k in os.environ.get("JOB_KEYWORDS", "account manager")
 LOCATION = os.environ.get("JOB_LOCATION", "Remote")
 REMOTE_ONLY = os.environ.get("JOB_REMOTE_ONLY", "true").lower() == "true"
 
-# Twilio SMS credentials (https://console.twilio.com)
-TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")
-TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "")
-TWILIO_FROM_NUMBER = os.environ.get("TWILIO_FROM_NUMBER", "")
-TWILIO_TO_NUMBER = os.environ.get("TWILIO_TO_NUMBER", "")
+# Free SMS via Gmail SMTP -> carrier email-to-SMS gateway (no Twilio needed).
+# GMAIL_USER/GMAIL_APP_PASSWORD: create an App Password at
+#   https://myaccount.google.com/apppasswords (requires 2FA enabled on the account)
+# SMS_TO_ADDRESS: your_number@carrier_gateway, e.g.:
+#   AT&T:      5551234567@txt.att.net
+#   Verizon:   5551234567@vtext.com
+#   T-Mobile:  5551234567@tmomail.net
+#   Sprint:    5551234567@messaging.sprintpcs.com
+GMAIL_USER = os.environ.get("GMAIL_USER", "")
+GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "")
+SMS_TO_ADDRESS = os.environ.get("SMS_TO_ADDRESS", "")
 
 # Where seen job IDs are persisted so you only get texted about NEW postings
 SEEN_JOBS_DB = os.environ.get("SEEN_JOBS_DB", os.path.join(os.path.dirname(__file__), "seen_jobs.json"))
